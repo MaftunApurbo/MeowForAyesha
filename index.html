@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeowForAyesha</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #FAFAF9;
+    color: #292524;
+    overflow-x: hidden;
+  }
+  .masonry-grid {
+    column-count: 2;
+    column-gap: 1rem;
+  }
+  @media (min-width: 768px) { .masonry-grid { column-count: 3; } }
+  @media (min-width: 1024px) { .masonry-grid { column-count: 4; } }
+  
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  .masonry-item:hover .item-overlay {
+    opacity: 1;
+  }
+  .loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #F59E0B;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Magic Flower Blooming Effects */
+  @keyframes flower-bloom {
+    0% { transform: translate(-50%, -50%) scale(0) translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.8) translateY(-40px) rotate(25deg); opacity: 0; }
+  }
+  .cursor-flower {
+    position: absolute;
+    pointer-events: none;
+    animation: flower-bloom 1.2s ease-out forwards;
+    z-index: 110;
+    user-select: none;
+    font-size: 1.5rem;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));
+  }
+
+  /* Click Paw Prints */
+  @keyframes paw-fade {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+  }
+  .paw-print {
+    position: absolute;
+    pointer-events: none;
+    animation: paw-fade 1s ease-out forwards;
+    z-index: 105;
+    font-size: 2.5rem;
+  }
+
+  /* Floating Background Flowers */
+  .float-1 { animation: float1 4s ease-in-out infinite; }
+  .float-2 { animation: float2 5.5s ease-in-out infinite; }
+  .float-3 { animation: float1 6s ease-in-out infinite reverse; }
+  @keyframes float1 { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(10deg); } }
+  @keyframes float2 { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-25px) rotate(-10deg); } }
+
+  /* Interactive Breathing Background */
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .bg-interactive {
+    background: linear-gradient(-45deg, #fafaf9, #fce7f3, #fef3c7, #fff1f2);
+    background-size: 400% 400%;
+    animation: gradient-shift 12s ease infinite;
+  }
+
+  /* Main Feed Animated Background */
+  .main-bg-animated {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    animation: bg-pastel-shift 20s infinite alternate ease-in-out;
+  }
+  @keyframes bg-pastel-shift {
+    0% { background-color: #fff1f2; } /* soft rose */
+    25% { background-color: #faf5ff; } /* soft purple */
+    50% { background-color: #f0fdfa; } /* soft teal */
+    75% { background-color: #fffbeb; } /* soft amber */
+    100% { background-color: #fdf2f8; } /* soft pink */
+  }
+
+  /* Interactive Cursor Glow Blob */
+  .cursor-glow-blob {
+    position: fixed;
+    width: 60vw;
+    height: 60vw;
+    max-width: 800px;
+    max-height: 800px;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: -1;
+    transform: translate(-50%, -50%);
+    animation: blob-colors 12s infinite alternate ease-in-out;
+    opacity: 0.5;
+    transition: left 0.4s ease-out, top 0.4s ease-out; /* Smooth floating follow */
+  }
+  @keyframes blob-colors {
+    0% { background: #fbcfe8; } /* pink */
+    33% { background: #ddd6fe; } /* violet */
+    66% { background: #bfdbfe; } /* blue */
+    100% { background: #fde68a; } /* amber */
+  }
+</style>
+</head>
+<body class="overflow-hidden">
+
+<!-- Login View -->
+<div id="login-view" class="fixed inset-0 w-full h-full min-h-screen z-[100] bg-interactive overflow-hidden flex flex-col items-center justify-center transition-opacity duration-700">
+  
+  <!-- Decorative Floating Flowers -->
+  <div class="absolute top-10 left-10 text-5xl float-1 opacity-70 cursor-default">🪷</div>
+  <div class="absolute bottom-20 left-16 text-6xl float-2 opacity-80 cursor-default">🌸</div>
+  <div class="absolute top-1/4 right-12 text-5xl float-3 opacity-60 cursor-default">🌺</div>
+  <div class="absolute bottom-1/4 right-20 text-6xl float-1 opacity-70 cursor-default">🪷</div>
+  <div class="absolute top-1/3 left-1/4 text-4xl float-2 opacity-50 cursor-default">💮</div>
+  <div class="absolute bottom-10 right-1/3 text-5xl float-3 opacity-80 cursor-default">🌸</div>
+
+  <div class="relative z-10 flex flex-col items-center">
+    
+    <!-- Interactive Peeking Cat & Title -->
+    <div class="flex items-end space-x-3 mb-4">
+      <span class="text-4xl animate-pulse">🌸</span>
+      <div id="cat-avatar" class="text-7xl transition-transform duration-300 hover:scale-110 cursor-pointer drop-shadow-md">😺</div>
+      <span class="text-4xl animate-pulse" style="animation-delay: 0.2s">🌸</span>
+    </div>
+    
+    <h1 class="text-4xl md:text-5xl font-extrabold text-amber-700 mb-8 text-center drop-shadow-sm">Welcome, Ayesha</h1>
+
+    <div class="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-amber-100 max-w-sm w-full mx-4 relative transform transition-all hover:shadow-amber-200/50 hover:-translate-y-1">
+        <label class="block text-sm font-bold text-stone-700 mb-3" for="password-input">Please enter your password:</label>
+        <input type="password" id="password-input" class="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500 outline-none mb-4 transition-all bg-white/90" placeholder="Type password here...">
+        <p id="error-msg" class="text-red-500 text-sm hidden mb-4 font-medium">Oops! Incorrect password 😿</p>
+        <button onclick="checkPassword()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-xl transition-transform active:scale-95 shadow-md">
+            Let me in! ✨
+        </button>
+    </div>
+  </div>
+</div>
+
+<!-- Media Modal with Kitty Diary -->
+<div id="media-modal" class="fixed inset-0 z-[150] bg-black/95 hidden flex-col items-center justify-center p-4 transition-opacity duration-300 opacity-0 overflow-y-auto">
+  <button onclick="closeModal()" class="absolute top-4 right-4 sm:top-6 sm:right-8 text-white/70 hover:text-white text-5xl transition-colors z-50">&times;</button>
+  
+  <div class="w-full h-full max-w-5xl flex flex-col items-center justify-center relative gap-6 py-10">
+    <div id="media-container" class="w-full flex justify-center max-h-[50vh] relative">
+      <!-- Media Content injected here -->
+    </div>
+
+    <!-- Kitty Diary UI -->
+    <div class="w-full max-w-xl bg-white/10 backdrop-blur-md p-6 rounded-2xl text-white border border-white/20 shadow-2xl z-10 flex flex-col gap-4">
+        <h3 class="font-bold text-amber-300 text-xl flex items-center gap-2">🎀 Kitty Diary</h3>
+        
+        <div>
+            <label class="block text-sm font-bold text-stone-200 mb-1">Name this kitty:</label>
+            <input type="text" id="cat-custom-name" class="w-full px-4 py-2.5 bg-black/40 border border-white/20 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none text-white placeholder-white/50 transition-all" placeholder="e.g. Sir Fluffington">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-bold text-stone-200 mb-1">Notes / About:</label>
+            <textarea id="cat-custom-notes" rows="2" class="w-full px-4 py-2.5 bg-black/40 border border-white/20 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none text-white placeholder-white/50 resize-none transition-all" placeholder="So fluffy, loves naps..."></textarea>
+        </div>
+        
+        <button id="save-details-btn" onclick="saveCatDetails()" class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-3 rounded-xl font-bold shadow-lg transition-transform active:scale-95 flex items-center justify-center mt-2 border border-amber-400">
+            💖 Save Details
+        </button>
+    </div>
+  </div>
+</div>
+
+<!-- Main App Content (Hidden until login) -->
+<div id="main-app" class="hidden opacity-0 transition-opacity duration-700 relative">
+  
+  <!-- New Magical Backgrounds -->
+  <div class="main-bg-animated"></div>
+  <div id="cursor-glow-blob" class="cursor-glow-blob hidden sm:block top-1/2 left-1/2"></div>
+
+  <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-stone-200 px-4 py-3 shadow-sm">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="text-2xl font-bold tracking-tighter text-amber-600 hidden sm:block">
+        &#128049; MeowForAyesha
+      </div>
+      <div class="text-2xl font-bold tracking-tighter text-amber-600 sm:hidden">
+        &#128049;
+      </div>
+      
+      <!-- New Navigation Tabs -->
+      <div class="flex space-x-2">
+        <button id="btn-tab-feed" onclick="switchAppTab('feed')" class="px-4 py-1.5 rounded-full text-sm font-bold bg-amber-500 text-white shadow-sm transition-all flex items-center gap-1">
+          🐾 Feed
+        </button>
+        <button id="btn-tab-saved" onclick="switchAppTab('saved')" class="px-4 py-1.5 rounded-full text-sm font-bold bg-stone-100 text-stone-600 hover:bg-stone-200 transition-all flex items-center gap-1">
+          💖 Saved (<span id="saved-count">0</span>)
+        </button>
+      </div>
+
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto p-4 pt-6">
+    
+    <!-- FEED VIEW -->
+    <section id="view-feed" class="block">
+      <div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+        <div class="max-w-2xl">
+          <h1 class="text-3xl md:text-4xl font-extrabold text-stone-800 mb-2 tracking-tight">Ayesha's Purrfect Paradise 🌸</h1>
+          <p class="text-stone-600 text-lg">A cozy little corner filled with soft paws, sweet purrs, and endless fluff, made specially to make Ayesha smile today. Scroll down to meet your new furry friends! 🐾✨</p>
+        </div>
+        <button id="auto-fetch-btn" onclick="triggerAutoFetch()" class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-full font-bold shadow-sm transition-transform active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap hidden sm:flex">
+          ✨ More Fluff Please! 🐾
+        </button>
+      </div>
+
+      <div id="feed-container" class="masonry-grid"></div>
+      <div id="loading-indicator" class="loader" style="display: none;"></div>
+    </section>
+
+    <!-- SAVED VIEW -->
+    <section id="view-saved" class="hidden">
+      <div class="mb-6 max-w-2xl">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-stone-800 mb-2 tracking-tight">Ayesha's Saved Favorites 💖</h1>
+        <p class="text-stone-600 text-lg">All the special kitties you wanted to keep forever! They are safe and sound right here in your personal collection. 🎀</p>
+      </div>
+
+      <div id="saved-container" class="masonry-grid"></div>
+      
+      <div id="empty-saved-state" class="text-center py-24 text-stone-500 hidden bg-white rounded-3xl border border-stone-100 shadow-sm mt-8">
+        <div class="text-6xl mb-4 animate-bounce">😿</div>
+        <p class="text-2xl font-bold text-stone-700 mb-2">No kitties saved yet!</p>
+        <p class="text-lg">Go back to the feed and click "Save" on the ones you love.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="fixed bottom-6 right-6 sm:hidden z-40" id="auto-fetch-mobile">
+    <button onclick="triggerAutoFetch()" class="bg-amber-500 hover:bg-amber-600 text-white w-14 h-14 rounded-full font-medium text-xl shadow-lg flex items-center justify-center transition-transform active:scale-95">
+      🐾
+    </button>
+  </div>
+</div> <!-- End Main App Content -->
+
+<script>
+  let isFetching = false;
+  let savedKitties = []; // Array to store Ayesha's saved cats!
+  let currentModalCat = null; // Tracks which cat is open in the diary
+
+  const API_URL = 'https://api.thecatapi.com/v1/images/search?limit=10&mime_types=jpg,png,gif';
+  const feedContainer = document.getElementById('feed-container');
+  const loadingIndicator = document.getElementById('loading-indicator');
+
+  const names = ['whiskers_fan', 'cat_lover99', 'paw_prints', 'meow_master', 'feline_fine', 'purrfect_pics', 'daily_beans'];
+  const commentsText = ['So cute! &#128525;', 'Omg need!', 'Majestic.', 'Those eyes!!', 'Perfect.', 'Meow &#128062;'];
+
+  // Magic Cursor Bloom Logic
+  const loginView = document.getElementById('login-view');
+  let lastFlowerTime = 0;
+  const flowerEmojis = ['🪷', '🌸', '🌺', '💮', '✨'];
+
+  // Interactive Cat Avatar Logic
+  const pwdInput = document.getElementById('password-input');
+  const catAvatar = document.getElementById('cat-avatar');
+  
+  if (pwdInput && catAvatar) {
+    pwdInput.addEventListener('focus', () => {
+      catAvatar.innerText = '🙈';
+      catAvatar.classList.add('scale-110', '-translate-y-2');
+    });
+    pwdInput.addEventListener('blur', () => {
+      catAvatar.innerText = '😺';
+      catAvatar.classList.remove('scale-110', '-translate-y-2');
+    });
+  }
+
+  // Click to spawn Paw Prints
+  loginView.addEventListener('mousedown', (e) => {
+    if (e.target.closest('.bg-white\\/80')) return;
+
+    const paw = document.createElement('div');
+    paw.className = 'paw-print text-stone-700/40';
+    paw.innerText = '🐾';
+    paw.style.left = e.clientX + 'px';
+    paw.style.top = e.clientY + 'px';
+    
+    const rotation = (Math.random() - 0.5) * 40;
+    paw.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+    
+    loginView.appendChild(paw);
+    setTimeout(() => { if (loginView.contains(paw)) paw.remove(); }, 1000);
+  });
+
+  function createFlower(clientX, clientY) {
+    const now = Date.now();
+    if (now - lastFlowerTime < 80) return;
+    lastFlowerTime = now;
+
+    const flower = document.createElement('div');
+    flower.className = 'cursor-flower';
+    flower.innerText = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
+    flower.style.left = clientX + 'px';
+    flower.style.top = clientY + 'px';
+    
+    loginView.appendChild(flower);
+
+    setTimeout(() => {
+      if (loginView.contains(flower)) {
+        flower.remove();
+      }
+    }, 1200);
+  }
+
+  loginView.addEventListener('mousemove', (e) => createFlower(e.clientX, e.clientY));
+  loginView.addEventListener('touchmove', (e) => {
+    if (e.touches.length > 0) {
+      createFlower(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  });
+
+  // Track mouse for the glowing background blob in the main feed
+  document.addEventListener('mousemove', (e) => {
+    const mainApp = document.getElementById('main-app');
+    const blob = document.getElementById('cursor-glow-blob');
+    // Only move the blob if the main app is visible
+    if (blob && !mainApp.classList.contains('hidden')) {
+        blob.style.left = e.clientX + 'px';
+        blob.style.top = e.clientY + 'px';
+    }
+  });
+
+  // Modal and Kitty Diary Integration
+  function openModal(cat) {
+    const modal = document.getElementById('media-modal');
+    const mediaContainer = document.getElementById('media-container');
+    
+    currentModalCat = cat; // Remember which cat is being edited
+
+    if (cat.isVideo) {
+      mediaContainer.innerHTML = `<video src="${cat.url}" autoplay controls loop class="max-w-full max-h-[50vh] rounded-2xl shadow-2xl bg-black object-contain"></video>`;
+    } else {
+      mediaContainer.innerHTML = `<img src="${cat.url}" class="max-w-full max-h-[50vh] rounded-2xl shadow-2xl object-contain border-4 border-white/10" />`;
+    }
+    
+    // Fill the diary inputs if Ayesha already wrote something
+    document.getElementById('cat-custom-name').value = cat.customName || '';
+    document.getElementById('cat-custom-notes').value = cat.customNotes || '';
+    document.getElementById('save-details-btn').innerHTML = '💖 Save Details';
+
+    modal.classList.remove('hidden');
+    setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    document.body.classList.add('overflow-hidden');
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('media-modal');
+    const mediaContainer = document.getElementById('media-container');
+    modal.classList.add('opacity-0');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      mediaContainer.innerHTML = ''; // clear media
+      if (document.getElementById('login-view').style.display === 'none') {
+        document.body.classList.remove('overflow-hidden');
+      }
+    }, 300);
+  }
+
+  function saveCatDetails() {
+    if (!currentModalCat) return;
+
+    const newName = document.getElementById('cat-custom-name').value.trim();
+    const newNotes = document.getElementById('cat-custom-notes').value.trim();
+
+    // Update the cat object
+    currentModalCat.customName = newName;
+    currentModalCat.customNotes = newNotes;
+
+    // Auto-save the cat to the collection if she typed something new!
+    const index = savedKitties.findIndex(c => c.url === currentModalCat.url);
+    if (index === -1 && (newName || newNotes)) {
+        savedKitties.push(currentModalCat);
+        document.getElementById('saved-count').innerText = savedKitties.length;
+    }
+
+    // Instantly update the visual cards on the feed & saved pages
+    const cards = document.querySelectorAll(`.cat-card[data-url="${currentModalCat.url}"]`);
+    cards.forEach(card => {
+        const nameDisplay = card.querySelector('.custom-name-display');
+        const notesDisplay = card.querySelector('.notes-display');
+        
+        if (newName) {
+            nameDisplay.innerText = '🎀 ' + newName;
+            nameDisplay.classList.remove('hidden');
+        } else {
+            nameDisplay.classList.add('hidden');
+        }
+
+        if (newNotes) {
+            notesDisplay.innerText = '📝 ' + newNotes;
+        } else {
+            notesDisplay.innerText = currentModalCat.comment;
+        }
+
+        const saveBtn = card.querySelector('.save-btn');
+        if (saveBtn && (newName || newNotes)) {
+            saveBtn.innerText = '💖 Saved!';
+            saveBtn.className = 'save-btn bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-full text-sm transition-colors shadow-md';
+        }
+    });
+
+    // Refresh saved tab if we're looking at it
+    if (document.getElementById('view-saved').classList.contains('block')) {
+        renderSavedKitties(); 
+    }
+
+    // Show a cute confirmation
+    const btn = document.getElementById('save-details-btn');
+    btn.innerHTML = '✨ Saved!';
+  }
+
+  function checkPassword() {
+    const input = document.getElementById('password-input').value;
+    const errorMsg = document.getElementById('error-msg');
+    const loginView = document.getElementById('login-view');
+    const mainApp = document.getElementById('main-app');
+    
+    if (input === 'hiiamayesha') {
+      errorMsg.classList.add('hidden');
+      loginView.style.opacity = '0';
+      setTimeout(() => {
+        loginView.style.display = 'none';
+        document.body.classList.remove('overflow-hidden');
+        
+        mainApp.classList.remove('hidden');
+        setTimeout(() => mainApp.classList.remove('opacity-0'), 50);
+        
+        fetchCats(); 
+      }, 700);
+    } else {
+      errorMsg.classList.remove('hidden');
+    }
+  }
+
+  // Tab Switching Logic
+  window.switchAppTab = function(tab) {
+    const feedView = document.getElementById('view-feed');
+    const savedView = document.getElementById('view-saved');
+    const btnFeed = document.getElementById('btn-tab-feed');
+    const btnSaved = document.getElementById('btn-tab-saved');
+    const autoFetchBtn = document.getElementById('auto-fetch-btn'); 
+    const autoFetchMobile = document.getElementById('auto-fetch-mobile'); 
+
+    if (tab === 'feed') {
+        feedView.classList.remove('hidden');
+        feedView.classList.add('block');
+        savedView.classList.add('hidden');
+        savedView.classList.remove('block');
+        
+        btnFeed.className = 'px-4 py-1.5 rounded-full text-sm font-bold bg-amber-500 text-white shadow-sm transition-all flex items-center gap-1';
+        btnSaved.className = 'px-4 py-1.5 rounded-full text-sm font-bold bg-stone-100 text-stone-600 hover:bg-stone-200 transition-all flex items-center gap-1';
+        
+        if(autoFetchBtn) autoFetchBtn.style.display = 'flex';
+        if(autoFetchMobile) autoFetchMobile.style.display = 'flex';
+    } else {
+        feedView.classList.add('hidden');
+        feedView.classList.remove('block');
+        savedView.classList.remove('hidden');
+        savedView.classList.add('block');
+        
+        btnFeed.className = 'px-4 py-1.5 rounded-full text-sm font-bold bg-stone-100 text-stone-600 hover:bg-stone-200 transition-all flex items-center gap-1';
+        btnSaved.className = 'px-4 py-1.5 rounded-full text-sm font-bold bg-pink-500 text-white shadow-sm transition-all flex items-center gap-1';
+        
+        if(autoFetchBtn) autoFetchBtn.style.display = 'none';
+        if(autoFetchMobile) autoFetchMobile.style.display = 'none';
+        
+        renderSavedKitties();
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const pwdInput = document.getElementById('password-input');
+    if (pwdInput) {
+      pwdInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') checkPassword();
+      });
+    }
+  });
+
+  async function fetchCats(isManual = false) {
+    if (isFetching) return;
+    isFetching = true;
+    loadingIndicator.style.display = 'block';
+
+    try {
+      const response = await fetch(API_URL);
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+      
+      data.forEach((apiCat, index) => {
+        // Construct the full cat object to ensure consistency when saving
+        const cat = {
+            url: apiCat.url,
+            isVideo: apiCat.url.endsWith('.gif') || apiCat.url.endsWith('.mp4'),
+            likes: Math.floor(Math.random() * 5000) + 12,
+            author: names[Math.floor(Math.random() * names.length)],
+            comment: commentsText[Math.floor(Math.random() * commentsText.length)]
+        };
+        createPostElement(cat, feedContainer, isManual && index === 0); 
+      });
+
+    } catch (error) {
+      console.error('Error fetching cats:', error);
+      const fallbackData = Array.from({length: 10}).map(() => {
+        const width = 400;
+        const height = Math.floor(Math.random() * 200) + 300;
+        return {
+          url: `https://placecats.com/${width}/${height}?v=${Math.random()}`,
+          isVideo: false,
+          likes: Math.floor(Math.random() * 5000) + 12,
+          author: names[Math.floor(Math.random() * names.length)],
+          comment: commentsText[Math.floor(Math.random() * commentsText.length)]
+        };
+      });
+      
+      fallbackData.forEach((cat, index) => {
+        createPostElement(cat, feedContainer, isManual && index === 0); 
+      });
+    } finally {
+      isFetching = false;
+      loadingIndicator.style.display = 'none';
+    }
+  }
+
+  function createPostElement(cat, container, prepend = false) {
+    const isSaved = savedKitties.some(c => c.url === cat.url);
+    const saveBtnClass = isSaved ? 'bg-pink-500 hover:bg-pink-600' : 'bg-amber-500 hover:bg-amber-600';
+    const saveBtnText = isSaved ? '💖 Saved!' : 'Save';
+
+    const itemDiv = document.createElement('div');
+    // Added cat-card and data-url so the diary can find and update it
+    itemDiv.className = 'masonry-item cat-card bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden cursor-pointer group';
+    itemDiv.setAttribute('data-url', cat.url);
+    
+    itemDiv.innerHTML = `
+      <div class="relative media-wrapper">
+        <img src="${cat.url}" alt="Cat image" loading="lazy" class="w-full h-auto object-cover" />
+        ${cat.isVideo ? `<div class="absolute top-2 right-2 bg-black/60 text-white rounded-md px-2 py-1 text-xs font-bold backdrop-blur-sm flex items-center shadow-lg"><span class="mr-1 text-amber-400">✨</span> Animated</div>` : ''}
+        <div class="item-overlay absolute inset-0 bg-black/30 opacity-0 transition-opacity duration-200 flex flex-col justify-between p-4">
+          <div class="flex justify-end">
+            <button data-url="${cat.url}" class="save-btn ${saveBtnClass} text-white font-bold py-2 px-4 rounded-full text-sm transition-colors shadow-md">
+              ${saveBtnText}
+            </button>
+          </div>
+          <div class="flex items-end justify-between text-white drop-shadow-md font-medium">
+            <div class="flex items-center space-x-3">
+              <button class="like-btn flex items-center space-x-1 hover:text-red-400 transition-colors text-lg" data-likes="${cat.likes}">
+                <span>&#9825;</span> <span class="text-sm text-likes">${cat.likes}</span>
+              </button>
+              <div class="flex items-center space-x-1 text-lg">
+                <span>&#128172;</span> <span class="text-sm">${Math.floor(Math.random() * 100)}</span>
+              </div>
+            </div>
+            <div class="text-xl hover:text-amber-400 transition-colors">
+              ${cat.isVideo ? '&#9654; Play' : '&#10148; View'}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-3">
+        <div class="custom-name-display font-extrabold text-amber-600 text-lg mb-1 leading-tight ${cat.customName ? '' : 'hidden'}">🎀 ${cat.customName || ''}</div>
+        <div class="flex items-center space-x-2">
+          <div class="w-6 h-6 rounded-full bg-stone-200 flex items-center justify-center text-xs font-bold text-stone-500">
+            ${cat.author.charAt(0).toUpperCase()}
+          </div>
+          <p class="text-sm font-semibold text-stone-800">@${cat.author}</p>
+        </div>
+        <p class="text-sm text-stone-600 mt-1 truncate notes-display">${cat.customNotes ? '📝 ' + cat.customNotes : cat.comment}</p>
+      </div>
+    `;
+
+    // Attach Javascript Event Listeners cleanly
+    const saveBtn = itemDiv.querySelector('.save-btn');
+    saveBtn.onclick = (e) => {
+        e.stopPropagation();
+        toggleSave(cat, saveBtn);
+    };
+
+    // Pass the entire cat object to the modal so Ayesha can edit it!
+    itemDiv.querySelector('.media-wrapper').onclick = () => openModal(cat);
+
+    const likeBtn = itemDiv.querySelector('.like-btn');
+    likeBtn.onclick = (e) => {
+        e.stopPropagation();
+        toggleLike(likeBtn);
+    };
+
+    const imgElement = itemDiv.querySelector('img');
+    if (imgElement) {
+      imgElement.onerror = () => {
+        itemDiv.style.display = 'none';
+      };
+    }
+
+    if (prepend) {
+      container.prepend(itemDiv);
+    } else {
+      container.appendChild(itemDiv);
+    }
+  }
+
+  function toggleSave(cat, btnElement) {
+    const index = savedKitties.findIndex(c => c.url === cat.url);
+    const isNowSaved = index === -1;
+    
+    if (isNowSaved) {
+        savedKitties.push(cat); // Add to saved array
+    } else {
+        savedKitties.splice(index, 1); // Remove from saved array
+    }
+    
+    document.getElementById('saved-count').innerText = savedKitties.length;
+    
+    // Visually update ALL buttons that match this kitty (in feed and saved tab)
+    const btns = document.querySelectorAll(`.save-btn[data-url="${cat.url}"]`);
+    btns.forEach(btn => {
+        if(isNowSaved) {
+            btn.innerText = '💖 Saved!';
+            btn.className = 'save-btn bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-full text-sm transition-colors shadow-md';
+        } else {
+            btn.innerText = 'Save';
+            btn.className = 'save-btn bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-full text-sm transition-colors shadow-md';
+        }
+    });
+
+    // If we are currently looking at the saved tab, re-render it to remove/add instantly
+    if (document.getElementById('view-saved').classList.contains('block')) {
+        renderSavedKitties();
+    }
+  }
+
+  function renderSavedKitties() {
+    const container = document.getElementById('saved-container');
+    const emptyState = document.getElementById('empty-saved-state');
+    
+    container.innerHTML = ''; 
+    
+    if (savedKitties.length === 0) {
+        emptyState.classList.remove('hidden');
+    } else {
+        emptyState.classList.add('hidden');
+        // Render each saved kitty from the array
+        savedKitties.forEach(cat => {
+            createPostElement(cat, container, false);
+        });
+    }
+  }
+
+  window.toggleLike = function(btn) {
+    const iconSpan = btn.querySelector('span:first-child');
+    const countSpan = btn.querySelector('.text-likes');
+    let currentLikes = parseInt(btn.getAttribute('data-likes'));
+
+    if (iconSpan.innerHTML === '♡') {
+      iconSpan.innerHTML = '♥';
+      iconSpan.classList.add('text-red-500');
+      currentLikes++;
+    } else {
+      iconSpan.innerHTML = '♡';
+      iconSpan.classList.remove('text-red-500');
+      currentLikes--;
+    }
+    
+    btn.setAttribute('data-likes', currentLikes);
+    countSpan.innerText = currentLikes;
+  };
+
+  window.triggerAutoFetch = function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    fetchCats(true);
+  };
+
+  window.addEventListener('scroll', () => {
+    // Only auto-fetch if we are on the feed tab
+    if (document.getElementById('view-feed').classList.contains('hidden')) return;
+
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+      fetchCats();
+    }
+  });
+
+</script>
+</body>
+</html>
